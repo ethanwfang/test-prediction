@@ -25,6 +25,53 @@ def get_embedding_model():
     return _model
 
 
+def search_semantic(items: list[dict], query: str, top_k: int = 20, threshold: float = 0.25) -> list[dict]:
+    """
+    Search items using semantic similarity with transformer embeddings.
+
+    Works for both series and markets.
+
+    Args:
+        items: List of dictionaries with 'title' and 'ticker' keys
+        query: Search query
+        top_k: Number of top matches to return
+        threshold: Minimum similarity score (0-1) to include
+
+    Returns:
+        List of matching items sorted by semantic similarity
+    """
+    if not items or not query:
+        return []
+
+    model = get_embedding_model()
+
+    # Build texts from titles and tickers
+    texts = [f"{s.get('title', '')} {s.get('ticker', '')}" for s in items]
+
+    # Encode query and all titles
+    query_embedding = model.encode([query], convert_to_numpy=True)
+    title_embeddings = model.encode(texts, convert_to_numpy=True, show_progress_bar=False)
+
+    # Compute cosine similarities
+    query_norm = query_embedding / np.linalg.norm(query_embedding, axis=1, keepdims=True)
+    title_norms = title_embeddings / np.linalg.norm(title_embeddings, axis=1, keepdims=True)
+
+    similarities = np.dot(title_norms, query_norm.T).flatten()
+
+    # Get top results above threshold
+    sorted_indices = similarities.argsort()[::-1]
+
+    results = []
+    for idx in sorted_indices:
+        score = similarities[idx]
+        if score >= threshold and len(results) < top_k:
+            item = items[idx].copy()
+            item['_score'] = float(score)
+            results.append(item)
+
+    return results
+
+
 def search_series_semantic(series_list: list[dict], query: str, top_k: int = 10, threshold: float = 0.3) -> list[dict]:
     """
     Search series using semantic similarity with transformer embeddings.
@@ -527,33 +574,16 @@ def main():
         try:
             # Main menu
             mode_idx = select_option(
-                "How would you like to find markets?",
-                ["Search by keyword", "Browse by category", "Quit"]
+                "What would you like to do?",
+                ["Browse markets by category", "Quit"]
             )
 
-            if mode_idx == 2:
+            if mode_idx == 1:
                 print("\nGoodbye!")
                 break
 
-            markets = []
-
-            if mode_idx == 0:
-                # Keyword search
-                query = get_input("\nEnter search term")
-                if not query:
-                    print("Please enter a search term.")
-                    continue
-
-                print(f"\nSearching for '{query}'... (this may take a moment)")
-
-                markets = fetcher.search_markets(query=query, status="open", max_results=10)
-                if len(markets) < 10:
-                    closed_markets = fetcher.search_markets(query=query, status="closed", max_results=10 - len(markets))
-                    markets.extend(closed_markets)
-
-            elif mode_idx == 1:
-                # Browse by category
-                markets = browse_by_category(fetcher)
+            # Browse by category
+            markets = browse_by_category(fetcher)
 
             display_markets(markets)
 
