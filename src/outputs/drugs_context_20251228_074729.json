@@ -1,0 +1,1019 @@
+{
+  "metadata": {
+    "theme": "drugs",
+    "generated_at": "2025-12-28T07:47:26.182344",
+    "generator": "kalshi-context-builder"
+  },
+  "collection": {
+    "total_markets": 6,
+    "total_volume": 33990,
+    "top_5_volume": 33795,
+    "top_5_pct_of_total": 99.4,
+    "volume_gini": 0.636,
+    "status_distribution": {
+      "active": 6
+    },
+    "earliest_market": "2025-06-18",
+    "latest_market": "2025-08-14",
+    "event_groups": [
+      {
+        "event_ticker": "KXFDAAPPROVALPSYCHEDELIC-27",
+        "market_count": 1,
+        "total_volume": 21112
+      },
+      {
+        "event_ticker": "KXDRUGADS-25",
+        "market_count": 1,
+        "total_volume": 8369
+      },
+      {
+        "event_ticker": "KXFDAAPPROVAL-25",
+        "market_count": 4,
+        "total_volume": 4509
+      }
+    ],
+    "total_trades": 1266,
+    "total_contracts_traded": 33990
+  },
+  "market_groups": [
+    {
+      "event_ticker": "KXFDAAPPROVAL-25",
+      "market_count": 4,
+      "question": "Will the FDA approve UX111 this year?",
+      "total_volume": 4509,
+      "outcomes": {
+        "yes": 0,
+        "no": 0
+      },
+      "markets": [
+        {
+          "ticker": "KXFDAAPPROVAL-25-OXY",
+          "label": "KXFDAAPPROVAL-25-OXY",
+          "volume": 2476,
+          "final_price": 9.0
+        },
+        {
+          "ticker": "KXFDAAPPROVAL-25-FIL",
+          "label": "KXFDAAPPROVAL-25-FIL",
+          "volume": 1486,
+          "final_price": 8.0
+        },
+        {
+          "ticker": "KXFDAAPPROVAL-25-OBI",
+          "label": "KXFDAAPPROVAL-25-OBI",
+          "volume": 352,
+          "final_price": 9.0
+        },
+        {
+          "ticker": "KXFDAAPPROVAL-25-UX111",
+          "label": "KXFDAAPPROVAL-25-UX111",
+          "volume": 195,
+          "final_price": 7.0
+        }
+      ],
+      "lead_changes": {
+        "total_lead_changes": 6,
+        "changes": [
+          {
+            "date": "2025-08-18",
+            "new_leader": "KXFDAAPPROVAL-25-UX111",
+            "previous_leader": "KXFDAAPPROVAL-25-OXY",
+            "new_leader_price": 10.0
+          },
+          {
+            "date": "2025-08-22",
+            "new_leader": "KXFDAAPPROVAL-25-OXY",
+            "previous_leader": "KXFDAAPPROVAL-25-UX111",
+            "new_leader_price": 20.0
+          },
+          {
+            "date": "2025-09-30",
+            "new_leader": "KXFDAAPPROVAL-25-FIL",
+            "previous_leader": "KXFDAAPPROVAL-25-OXY",
+            "new_leader_price": 20.0
+          },
+          {
+            "date": "2025-10-20",
+            "new_leader": "KXFDAAPPROVAL-25-OXY",
+            "previous_leader": "KXFDAAPPROVAL-25-FIL",
+            "new_leader_price": 17.0
+          },
+          {
+            "date": "2025-11-22",
+            "new_leader": "KXFDAAPPROVAL-25-FIL",
+            "previous_leader": "KXFDAAPPROVAL-25-OXY",
+            "new_leader_price": 13.0
+          },
+          {
+            "date": "2025-11-25",
+            "new_leader": "KXFDAAPPROVAL-25-OBI",
+            "previous_leader": "KXFDAAPPROVAL-25-FIL",
+            "new_leader_price": 10.0
+          }
+        ],
+        "first_leader": "KXFDAAPPROVAL-25-OXY",
+        "final_leader": "KXFDAAPPROVAL-25-OBI"
+      }
+    }
+  ],
+  "markets": [
+    {
+      "ticker": "KXFDAAPPROVALPSYCHEDELIC-27-ANYPSYCH",
+      "title": "Will the FDA approve Any psychedelic substance for medical use this year?",
+      "status": "active",
+      "final_price": 33.0,
+      "event_ticker": "KXFDAAPPROVALPSYCHEDELIC-27",
+      "label": NaN,
+      "price_journey": {
+        "start": {
+          "date": "2025-07-17",
+          "price": 64.0
+        },
+        "end": {
+          "date": "2025-12-28",
+          "price": 33.0
+        },
+        "min": {
+          "date": "2025-09-01",
+          "price": 29.0
+        },
+        "max": {
+          "date": "2025-07-17",
+          "price": 64.0
+        },
+        "total_change": -31.0,
+        "total_change_pct": -48.4375,
+        "total_days": 164,
+        "price_range": 35.0,
+        "at_25_pct": {
+          "date": "2025-09-05",
+          "price": 43.0
+        },
+        "at_50_pct": {
+          "date": "2025-10-14",
+          "price": 43.0
+        },
+        "at_75_pct": {
+          "date": "2025-11-25",
+          "price": 41.0
+        }
+      },
+      "trend": {
+        "direction": "sideways",
+        "strength": 0.388,
+        "linear_slope": -0.0473,
+        "r_squared": 0.114,
+        "segments": [
+          {
+            "start": "2025-07-17",
+            "end": "2025-08-26",
+            "direction": "bearish",
+            "change": -25.0,
+            "start_price": 64.0,
+            "end_price": 39.0
+          },
+          {
+            "start": "2025-08-26",
+            "end": "2025-10-01",
+            "direction": "bearish",
+            "change": -6.0,
+            "start_price": 39.0,
+            "end_price": 33.0
+          },
+          {
+            "start": "2025-10-01",
+            "end": "2025-10-31",
+            "direction": "bullish",
+            "change": 11.0,
+            "start_price": 33.0,
+            "end_price": 44.0
+          },
+          {
+            "start": "2025-10-31",
+            "end": "2025-12-02",
+            "direction": "sideways",
+            "change": -1.0,
+            "start_price": 44.0,
+            "end_price": 43.0
+          },
+          {
+            "start": "2025-12-02",
+            "end": "2025-12-28",
+            "direction": "bearish",
+            "change": -10.0,
+            "start_price": 43.0,
+            "end_price": 33.0
+          }
+        ]
+      },
+      "volatility": {
+        "std_dev_daily_returns": 0.1472,
+        "avg_daily_range": 5.18,
+        "max_daily_range": 17.0,
+        "max_single_day_up": {
+          "date": "2025-09-03",
+          "change": 13.0
+        },
+        "max_single_day_down": {
+          "date": "2025-09-01",
+          "change": -12.0
+        },
+        "big_move_days": 46,
+        "big_move_threshold": 5,
+        "annualized_volatility": 2.336
+      },
+      "key_moments": [
+        {
+          "date": "2025-07-17",
+          "type": "threshold_cross",
+          "detail": "Crossed 25%",
+          "price": 64.0
+        },
+        {
+          "date": "2025-07-17",
+          "type": "threshold_cross",
+          "detail": "Crossed 50%",
+          "price": 64.0
+        },
+        {
+          "date": "2025-07-23",
+          "type": "big_move",
+          "detail": "-11.0 points (down)",
+          "price": 45.0
+        },
+        {
+          "date": "2025-07-25",
+          "type": "volume_spike",
+          "detail": "4.4x average volume",
+          "volume": 695
+        },
+        {
+          "date": "2025-09-01",
+          "type": "big_move",
+          "detail": "-12.0 points (down)",
+          "price": 29.0
+        },
+        {
+          "date": "2025-09-03",
+          "type": "big_move",
+          "detail": "+13.0 points (up)",
+          "price": 42.0
+        },
+        {
+          "date": "2025-09-03",
+          "type": "volume_spike",
+          "detail": "3.8x average volume",
+          "volume": 602
+        },
+        {
+          "date": "2025-10-07",
+          "type": "volume_spike",
+          "detail": "4.6x average volume",
+          "volume": 726
+        }
+      ],
+      "thresholds": {
+        "crossed_25": {
+          "date": "2025-07-17",
+          "days_from_start": 0,
+          "price_at_cross": 64.0
+        },
+        "days_above_25": 135,
+        "dropped_back_below_25": false,
+        "crossed_50": {
+          "date": "2025-07-17",
+          "days_from_start": 0,
+          "price_at_cross": 64.0
+        },
+        "days_above_50": 4,
+        "dropped_back_below_50": true,
+        "crossed_75": null,
+        "days_above_75": 0,
+        "dropped_back_below_75": false,
+        "crossed_90": null,
+        "days_above_90": 0,
+        "dropped_back_below_90": false
+      },
+      "volume": {
+        "total": 21112,
+        "avg_daily": 156.4,
+        "median_daily": 57.0,
+        "peak_day": {
+          "date": "2025-11-24",
+          "volume": 1399
+        },
+        "volume_trend": "increasing",
+        "vwap": 39.85,
+        "volume_at_highs_pct": 0.0,
+        "total_trades": 975,
+        "avg_trade_size": 21.7,
+        "median_trade_size": 6.0,
+        "max_trade_size": 984,
+        "yes_taker_pct": 63.4,
+        "total_reported": 21112
+      },
+      "relative_importance": {
+        "volume_rank": 1,
+        "volume_percentile": 83.3,
+        "pct_of_total_volume": 62.11,
+        "total_markets_in_collection": 6
+      }
+    },
+    {
+      "ticker": "KXDRUGADS-25",
+      "title": "Will pharmaceutical ads on TV be banned before 2025?",
+      "status": "active",
+      "final_price": 1.0,
+      "event_ticker": "KXDRUGADS-25",
+      "label": NaN,
+      "price_journey": {
+        "start": {
+          "date": "2025-07-02",
+          "price": 13.0
+        },
+        "end": {
+          "date": "2025-12-26",
+          "price": 1.0
+        },
+        "min": {
+          "date": "2025-12-01",
+          "price": 1.0
+        },
+        "max": {
+          "date": "2025-11-17",
+          "price": 33.0
+        },
+        "total_change": -12.0,
+        "total_change_pct": -92.3076923076923,
+        "total_days": 177,
+        "price_range": 32.0,
+        "at_25_pct": {
+          "date": "2025-08-10",
+          "price": 11.0
+        },
+        "at_50_pct": {
+          "date": "2025-10-06",
+          "price": 6.0
+        },
+        "at_75_pct": {
+          "date": "2025-11-17",
+          "price": 33.0
+        }
+      },
+      "trend": {
+        "direction": "bearish",
+        "strength": 0.397,
+        "linear_slope": -0.1187,
+        "r_squared": 0.266,
+        "segments": [
+          {
+            "start": "2025-07-02",
+            "end": "2025-08-02",
+            "direction": "sideways",
+            "change": 1.0,
+            "start_price": 13.0,
+            "end_price": 14.0
+          },
+          {
+            "start": "2025-08-02",
+            "end": "2025-09-14",
+            "direction": "bearish",
+            "change": -9.0,
+            "start_price": 14.0,
+            "end_price": 5.0
+          },
+          {
+            "start": "2025-09-14",
+            "end": "2025-10-16",
+            "direction": "sideways",
+            "change": 0.0,
+            "start_price": 5.0,
+            "end_price": 5.0
+          },
+          {
+            "start": "2025-10-16",
+            "end": "2025-11-18",
+            "direction": "sideways",
+            "change": 3.0,
+            "start_price": 5.0,
+            "end_price": 8.0
+          },
+          {
+            "start": "2025-11-18",
+            "end": "2025-12-20",
+            "direction": "sideways",
+            "change": -4.0,
+            "start_price": 8.0,
+            "end_price": 4.0
+          }
+        ]
+      },
+      "volatility": {
+        "std_dev_daily_returns": 1.9761,
+        "avg_daily_range": 2.19,
+        "max_daily_range": 12.0,
+        "max_single_day_up": {
+          "date": "2025-11-17",
+          "change": 31.0
+        },
+        "max_single_day_down": {
+          "date": "2025-11-18",
+          "change": -25.0
+        },
+        "big_move_days": 22,
+        "big_move_threshold": 5,
+        "annualized_volatility": 31.369
+      },
+      "key_moments": [
+        {
+          "date": "2025-07-07",
+          "type": "volume_spike",
+          "detail": "2.6x average volume",
+          "volume": 271
+        },
+        {
+          "date": "2025-07-21",
+          "type": "volume_spike",
+          "detail": "5.3x average volume",
+          "volume": 562
+        },
+        {
+          "date": "2025-08-05",
+          "type": "volume_spike",
+          "detail": "3.2x average volume",
+          "volume": 341
+        },
+        {
+          "date": "2025-09-28",
+          "type": "big_move",
+          "detail": "-10.0 points (down)",
+          "price": 2.0
+        },
+        {
+          "date": "2025-11-17",
+          "type": "threshold_cross",
+          "detail": "Crossed 25%",
+          "price": 33.0
+        },
+        {
+          "date": "2025-11-17",
+          "type": "big_move",
+          "detail": "+31.0 points (up)",
+          "price": 33.0
+        },
+        {
+          "date": "2025-11-18",
+          "type": "big_move",
+          "detail": "-25.0 points (down)",
+          "price": 8.0
+        }
+      ],
+      "thresholds": {
+        "crossed_25": {
+          "date": "2025-11-17",
+          "days_from_start": 138,
+          "price_at_cross": 33.0
+        },
+        "days_above_25": 1,
+        "dropped_back_below_25": true,
+        "crossed_50": null,
+        "days_above_50": 0,
+        "dropped_back_below_50": false,
+        "crossed_75": null,
+        "days_above_75": 0,
+        "dropped_back_below_75": false,
+        "crossed_90": null,
+        "days_above_90": 0,
+        "dropped_back_below_90": false
+      },
+      "volume": {
+        "total": 8369,
+        "avg_daily": 105.9,
+        "median_daily": 21.0,
+        "peak_day": {
+          "date": "2025-09-11",
+          "volume": 2263
+        },
+        "volume_trend": "decreasing",
+        "vwap": 8.4,
+        "volume_at_highs_pct": 0.0,
+        "total_trades": 210,
+        "avg_trade_size": 39.9,
+        "median_trade_size": 10.0,
+        "max_trade_size": 1000,
+        "yes_taker_pct": 60.5,
+        "total_reported": 8369
+      },
+      "relative_importance": {
+        "volume_rank": 2,
+        "volume_percentile": 66.7,
+        "pct_of_total_volume": 24.62,
+        "total_markets_in_collection": 6
+      }
+    },
+    {
+      "ticker": "KXFDAAPPROVAL-25-OXY",
+      "title": "Will the FDA approve Oxylanthanum Carbonate this year?",
+      "status": "active",
+      "final_price": 9.0,
+      "event_ticker": "KXFDAAPPROVAL-25",
+      "label": NaN,
+      "price_journey": {
+        "start": {
+          "date": "2025-06-19",
+          "price": 52.0
+        },
+        "end": {
+          "date": "2025-12-08",
+          "price": 9.0
+        },
+        "min": {
+          "date": "2025-11-22",
+          "price": 8.0
+        },
+        "max": {
+          "date": "2025-06-19",
+          "price": 52.0
+        },
+        "total_change": -43.0,
+        "total_change_pct": -82.6923076923077,
+        "total_days": 172,
+        "price_range": 44.0,
+        "at_25_pct": {
+          "date": "2025-06-26",
+          "price": 16.0
+        },
+        "at_50_pct": {
+          "date": "2025-08-22",
+          "price": 20.0
+        },
+        "at_75_pct": {
+          "date": "2025-10-17",
+          "price": 17.0
+        }
+      },
+      "trend": {
+        "direction": "bearish",
+        "strength": 0.375,
+        "linear_slope": -2.0221,
+        "r_squared": 0.665
+      },
+      "volatility": {
+        "std_dev_daily_returns": 0.4203,
+        "avg_daily_range": 3.82,
+        "max_daily_range": 24.0,
+        "max_single_day_up": {
+          "date": "2025-06-25",
+          "change": 12.0
+        },
+        "max_single_day_down": {
+          "date": "2025-06-24",
+          "change": -21.0
+        },
+        "big_move_days": 8,
+        "big_move_threshold": 5
+      },
+      "key_moments": [
+        {
+          "date": "2025-06-19",
+          "type": "threshold_cross",
+          "detail": "Crossed 25%",
+          "price": 52.0
+        },
+        {
+          "date": "2025-06-19",
+          "type": "threshold_cross",
+          "detail": "Crossed 50%",
+          "price": 52.0
+        },
+        {
+          "date": "2025-06-19",
+          "type": "volume_spike",
+          "detail": "3.1x average volume",
+          "volume": 454
+        },
+        {
+          "date": "2025-06-24",
+          "type": "big_move",
+          "detail": "-21.0 points (down)",
+          "price": 23.0
+        },
+        {
+          "date": "2025-06-24",
+          "type": "volume_spike",
+          "detail": "3.2x average volume",
+          "volume": 468
+        },
+        {
+          "date": "2025-06-26",
+          "type": "big_move",
+          "detail": "-19.0 points (down)",
+          "price": 16.0
+        },
+        {
+          "date": "2025-07-01",
+          "type": "volume_spike",
+          "detail": "6.8x average volume",
+          "volume": 990
+        },
+        {
+          "date": "2025-08-10",
+          "type": "big_move",
+          "detail": "-13.0 points (down)",
+          "price": 10.0
+        }
+      ],
+      "thresholds": {
+        "crossed_25": {
+          "date": "2025-06-19",
+          "days_from_start": 0,
+          "price_at_cross": 52.0
+        },
+        "days_above_25": 3,
+        "dropped_back_below_25": true,
+        "crossed_50": {
+          "date": "2025-06-19",
+          "days_from_start": 0,
+          "price_at_cross": 52.0
+        },
+        "days_above_50": 1,
+        "dropped_back_below_50": true,
+        "crossed_75": null,
+        "days_above_75": 0,
+        "dropped_back_below_75": false,
+        "crossed_90": null,
+        "days_above_90": 0,
+        "dropped_back_below_90": false
+      },
+      "volume": {
+        "total": 2476,
+        "avg_daily": 145.6,
+        "median_daily": 47.0,
+        "peak_day": {
+          "date": "2025-07-01",
+          "volume": 990
+        },
+        "volume_trend": "decreasing",
+        "vwap": 27.6,
+        "volume_at_highs_pct": 0.0,
+        "total_trades": 41,
+        "avg_trade_size": 60.4,
+        "median_trade_size": 32.0,
+        "max_trade_size": 400,
+        "yes_taker_pct": 53.2,
+        "total_reported": 2476
+      },
+      "relative_importance": {
+        "volume_rank": 3,
+        "volume_percentile": 50.0,
+        "pct_of_total_volume": 7.28,
+        "total_markets_in_collection": 6
+      }
+    },
+    {
+      "ticker": "KXFDAAPPROVAL-25-FIL",
+      "title": "Will the FDA approve FILSPARI this year?",
+      "status": "active",
+      "final_price": 8.0,
+      "event_ticker": "KXFDAAPPROVAL-25",
+      "label": NaN,
+      "price_journey": {
+        "start": {
+          "date": "2025-09-16",
+          "price": 10.0
+        },
+        "end": {
+          "date": "2025-12-13",
+          "price": 8.0
+        },
+        "min": {
+          "date": "2025-11-25",
+          "price": 8.0
+        },
+        "max": {
+          "date": "2025-09-30",
+          "price": 20.0
+        },
+        "total_change": -2.0,
+        "total_change_pct": -20.0,
+        "total_days": 88,
+        "price_range": 12.0,
+        "at_25_pct": {
+          "date": "2025-10-06",
+          "price": 20.0
+        },
+        "at_50_pct": {
+          "date": "2025-10-30",
+          "price": 10.0
+        },
+        "at_75_pct": {
+          "date": "2025-12-07",
+          "price": 8.0
+        }
+      },
+      "trend": {
+        "direction": "bearish",
+        "strength": 0.25,
+        "linear_slope": -0.7582,
+        "r_squared": 0.371
+      },
+      "volatility": {
+        "std_dev_daily_returns": 0.2905,
+        "avg_daily_range": 1.62,
+        "max_daily_range": 13.0,
+        "max_single_day_up": {
+          "date": "2025-09-30",
+          "change": 8.0
+        },
+        "max_single_day_down": {
+          "date": "2025-10-20",
+          "change": -9.0
+        },
+        "big_move_days": 2,
+        "big_move_threshold": 5
+      },
+      "key_moments": [
+        {
+          "date": "2025-09-29",
+          "type": "volume_spike",
+          "detail": "3.4x average volume",
+          "volume": 391
+        },
+        {
+          "date": "2025-09-30",
+          "type": "big_move",
+          "detail": "+8.0 points (up)",
+          "price": 20.0
+        },
+        {
+          "date": "2025-10-20",
+          "type": "big_move",
+          "detail": "-9.0 points (down)",
+          "price": 11.0
+        },
+        {
+          "date": "2025-10-20",
+          "type": "volume_spike",
+          "detail": "3.4x average volume",
+          "volume": 392
+        }
+      ],
+      "thresholds": {
+        "crossed_25": null,
+        "days_above_25": 0,
+        "dropped_back_below_25": false,
+        "crossed_50": null,
+        "days_above_50": 0,
+        "dropped_back_below_50": false,
+        "crossed_75": null,
+        "days_above_75": 0,
+        "dropped_back_below_75": false,
+        "crossed_90": null,
+        "days_above_90": 0,
+        "dropped_back_below_90": false
+      },
+      "volume": {
+        "total": 1486,
+        "avg_daily": 114.3,
+        "median_daily": 23.0,
+        "peak_day": {
+          "date": "2025-10-20",
+          "volume": 392
+        },
+        "volume_trend": "decreasing",
+        "vwap": 11.23,
+        "volume_at_highs_pct": 0.0,
+        "total_trades": 23,
+        "avg_trade_size": 64.6,
+        "median_trade_size": 38.0,
+        "max_trade_size": 200,
+        "yes_taker_pct": 55.4,
+        "total_reported": 1486
+      },
+      "relative_importance": {
+        "volume_rank": 4,
+        "volume_percentile": 33.3,
+        "pct_of_total_volume": 4.37,
+        "total_markets_in_collection": 6
+      }
+    },
+    {
+      "ticker": "KXFDAAPPROVAL-25-OBI",
+      "title": "Will the FDA approve Obicetrapib this year?",
+      "status": "active",
+      "final_price": 9.0,
+      "event_ticker": "KXFDAAPPROVAL-25",
+      "label": NaN,
+      "price_journey": {
+        "start": {
+          "date": "2025-10-26",
+          "price": 12.0
+        },
+        "end": {
+          "date": "2025-12-08",
+          "price": 9.0
+        },
+        "min": {
+          "date": "2025-12-02",
+          "price": 9.0
+        },
+        "max": {
+          "date": "2025-10-27",
+          "price": 13.0
+        },
+        "total_change": -3.0,
+        "total_change_pct": -25.0,
+        "total_days": 43,
+        "price_range": 4.0,
+        "at_25_pct": {
+          "date": "2025-10-27",
+          "price": 13.0
+        },
+        "at_50_pct": {
+          "date": "2025-11-15",
+          "price": 10.0
+        },
+        "at_75_pct": {
+          "date": "2025-12-02",
+          "price": 9.0
+        }
+      },
+      "trend": {
+        "direction": "bearish",
+        "strength": 0.6,
+        "linear_slope": -0.8286,
+        "r_squared": 0.81
+      },
+      "volatility": {
+        "std_dev_daily_returns": 0.0963,
+        "avg_daily_range": 1.33,
+        "max_daily_range": 2.0,
+        "max_single_day_up": {
+          "date": "2025-10-27",
+          "change": 1.0
+        },
+        "max_single_day_down": {
+          "date": "2025-11-15",
+          "change": -2.0
+        },
+        "big_move_days": 0,
+        "big_move_threshold": 5
+      },
+      "key_moments": [
+        {
+          "date": "2025-10-27",
+          "type": "volume_spike",
+          "detail": "2.6x average volume",
+          "volume": 154
+        }
+      ],
+      "thresholds": {
+        "crossed_25": null,
+        "days_above_25": 0,
+        "dropped_back_below_25": false,
+        "crossed_50": null,
+        "days_above_50": 0,
+        "dropped_back_below_50": false,
+        "crossed_75": null,
+        "days_above_75": 0,
+        "dropped_back_below_75": false,
+        "crossed_90": null,
+        "days_above_90": 0,
+        "dropped_back_below_90": false
+      },
+      "volume": {
+        "total": 352,
+        "avg_daily": 58.7,
+        "median_daily": 43.0,
+        "peak_day": {
+          "date": "2025-10-27",
+          "volume": 154
+        },
+        "volume_trend": "decreasing",
+        "vwap": 11.69,
+        "volume_at_highs_pct": 0.0,
+        "total_trades": 10,
+        "avg_trade_size": 35.2,
+        "median_trade_size": 33.5,
+        "max_trade_size": 92,
+        "yes_taker_pct": 100.0,
+        "total_reported": 352
+      },
+      "relative_importance": {
+        "volume_rank": 5,
+        "volume_percentile": 16.7,
+        "pct_of_total_volume": 1.04,
+        "total_markets_in_collection": 6
+      }
+    },
+    {
+      "ticker": "KXFDAAPPROVAL-25-UX111",
+      "title": "Will the FDA approve UX111 this year?",
+      "status": "active",
+      "final_price": 7.0,
+      "event_ticker": "KXFDAAPPROVAL-25",
+      "label": NaN,
+      "price_journey": {
+        "start": {
+          "date": "2025-08-18",
+          "price": 10.0
+        },
+        "end": {
+          "date": "2025-12-16",
+          "price": 7.0
+        },
+        "min": {
+          "date": "2025-12-16",
+          "price": 7.0
+        },
+        "max": {
+          "date": "2025-08-18",
+          "price": 10.0
+        },
+        "total_change": -3.0,
+        "total_change_pct": -30.0,
+        "total_days": 120,
+        "price_range": 3.0,
+        "at_25_pct": {
+          "date": "2025-09-16",
+          "price": 10.0
+        },
+        "at_50_pct": {
+          "date": "2025-11-25",
+          "price": 8.0
+        },
+        "at_75_pct": {
+          "date": "2025-12-08",
+          "price": 8.0
+        }
+      },
+      "trend": {
+        "direction": "bearish",
+        "strength": 0.5,
+        "linear_slope": -0.8,
+        "r_squared": 0.889
+      },
+      "volatility": {
+        "std_dev_daily_returns": 0.0987,
+        "avg_daily_range": 0.8,
+        "max_daily_range": 4.0,
+        "max_single_day_up": {
+          "date": "2025-09-16",
+          "change": 0.0
+        },
+        "max_single_day_down": {
+          "date": "2025-11-25",
+          "change": -2.0
+        },
+        "big_move_days": 0,
+        "big_move_threshold": 5
+      },
+      "key_moments": [
+        {
+          "date": "2025-09-16",
+          "type": "volume_spike",
+          "detail": "2.8x average volume",
+          "volume": 108
+        }
+      ],
+      "thresholds": {
+        "crossed_25": null,
+        "days_above_25": 0,
+        "dropped_back_below_25": false,
+        "crossed_50": null,
+        "days_above_50": 0,
+        "dropped_back_below_50": false,
+        "crossed_75": null,
+        "days_above_75": 0,
+        "dropped_back_below_75": false,
+        "crossed_90": null,
+        "days_above_90": 0,
+        "dropped_back_below_90": false
+      },
+      "volume": {
+        "total": 195,
+        "avg_daily": 39.0,
+        "median_daily": 26.0,
+        "peak_day": {
+          "date": "2025-09-16",
+          "volume": 108
+        },
+        "volume_trend": "decreasing",
+        "vwap": 9.07,
+        "volume_at_highs_pct": 0.0,
+        "total_trades": 7,
+        "avg_trade_size": 27.9,
+        "median_trade_size": 26.0,
+        "max_trade_size": 66,
+        "yes_taker_pct": 40.0,
+        "total_reported": 195
+      },
+      "relative_importance": {
+        "volume_rank": 6,
+        "volume_percentile": 0.0,
+        "pct_of_total_volume": 0.57,
+        "total_markets_in_collection": 6
+      }
+    }
+  ]
+}

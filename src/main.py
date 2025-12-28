@@ -4,6 +4,7 @@ Interactive CLI for fetching Kalshi prediction market data.
 
 import sys
 import time
+from pathlib import Path
 
 import numpy as np
 from sentence_transformers import SentenceTransformer
@@ -11,6 +12,9 @@ from sentence_transformers import SentenceTransformer
 from kalshi_client import KalshiClient
 from market_fetcher import MarketFetcher
 from data_exporter import DataExporter
+
+# Add analysis module path
+sys.path.insert(0, str(Path(__file__).parent.parent / 'analysis'))
 
 # Load model once at startup (lazy loading)
 _model = None
@@ -440,7 +444,7 @@ def export_multiple_markets(fetcher, exporter, markets: list, data_types: list, 
         exporter: DataExporter instance
         markets: List of market dictionaries
         data_types: List of data types to export ('info', 'candlesticks', 'trades')
-        keyword: Keyword used for filename prefix
+        keyword: Keyword used for directory name
     """
     from datetime import datetime
     import pandas as pd
@@ -449,16 +453,20 @@ def export_multiple_markets(fetcher, exporter, markets: list, data_types: list, 
     exported_files = []
     keyword_clean = keyword.replace(" ", "_").lower() if keyword else "markets"
 
-    print(f"\nExporting data from {len(markets)} markets...\n")
+    # Create keyword-specific subdirectory
+    export_dir = Path(f"data/{keyword_clean}")
+    export_dir.mkdir(parents=True, exist_ok=True)
+
+    print(f"\nExporting data from {len(markets)} markets to {export_dir}/...\n")
 
     # Market info - one row per market
     if 'info' in data_types:
         print("Exporting market info...")
         df = pd.DataFrame(markets)
-        filepath = f"data/{keyword_clean}_markets_info_{timestamp}.csv"
+        filepath = export_dir / f"markets_info_{timestamp}.csv"
         df.to_csv(filepath, index=False)
-        exported_files.append((filepath, len(markets), "markets"))
-        print(f"  Saved {len(markets)} markets to {filepath}")
+        exported_files.append((str(filepath), len(markets), "markets"))
+        print(f"  Saved {len(markets)} markets")
 
     # Candlesticks - combine all
     if 'candlesticks' in data_types:
@@ -468,32 +476,44 @@ def export_multiple_markets(fetcher, exporter, markets: list, data_types: list, 
         for i, market in enumerate(markets, 1):
             ticker = market.get("ticker")
             series_ticker = market.get("series_ticker")
+            candles = None
+            source = "api"
 
-            if not series_ticker:
-                print(f"  [{i}/{len(markets)}] {ticker} - skipping (no series ticker)")
-                continue
+            # Try API first if series_ticker exists
+            if series_ticker:
+                try:
+                    candles = fetcher.get_candlesticks(
+                        ticker=ticker,
+                        series_ticker=series_ticker,
+                        period_interval=1440,  # Daily
+                    )
+                except Exception as e:
+                    if "429" in str(e):
+                        print(f"  [{i}/{len(markets)}] {ticker} - rate limited, waiting...")
+                        time.sleep(2)
+                    # Will try fallback below
 
-            try:
-                candles = fetcher.get_candlesticks(
-                    ticker=ticker,
-                    series_ticker=series_ticker,
-                    period_interval=1440,  # Daily
-                )
-                if candles:
-                    # Add market ticker to each row
-                    for c in candles:
-                        c['market_ticker'] = ticker
-                        c['market_title'] = market.get('title', '')
-                    all_candlesticks.extend(candles)
-                    print(f"  [{i}/{len(markets)}] {ticker} - {len(candles)} candlesticks")
-                else:
-                    print(f"  [{i}/{len(markets)}] {ticker} - no data")
-            except Exception as e:
-                if "429" in str(e):
-                    print(f"  [{i}/{len(markets)}] {ticker} - rate limited, waiting...")
-                    time.sleep(2)
-                else:
-                    print(f"  [{i}/{len(markets)}] {ticker} - error: {e}")
+            # Fallback: reconstruct from trades if API failed or no series_ticker
+            if not candles:
+                try:
+                    trades = fetcher.get_all_trades(ticker=ticker, max_trades=10000)
+                    if trades:
+                        candles = exporter.reconstruct_candlesticks_from_trades(trades, period_minutes=1440)
+                        source = "trades"
+                except Exception as e:
+                    if "429" in str(e):
+                        time.sleep(2)
+
+            if candles:
+                # Add market info and source to each row
+                for c in candles:
+                    c['market_ticker'] = ticker
+                    c['market_title'] = market.get('title', '')
+                    c['data_source'] = source
+                all_candlesticks.extend(candles)
+                print(f"  [{i}/{len(markets)}] {ticker} - {len(candles)} candlesticks ({source})")
+            else:
+                print(f"  [{i}/{len(markets)}] {ticker} - no data")
 
             time.sleep(0.3)  # Rate limit
 
@@ -501,10 +521,10 @@ def export_multiple_markets(fetcher, exporter, markets: list, data_types: list, 
             df = pd.DataFrame(all_candlesticks)
             if 'end_period_ts' in df.columns:
                 df['datetime'] = pd.to_datetime(df['end_period_ts'], unit='s')
-            filepath = f"data/{keyword_clean}_candlesticks_{timestamp}.csv"
+            filepath = export_dir / f"candlesticks_{timestamp}.csv"
             df.to_csv(filepath, index=False)
-            exported_files.append((filepath, len(all_candlesticks), "candlesticks"))
-            print(f"\n  Saved {len(all_candlesticks)} candlesticks to {filepath}")
+            exported_files.append((str(filepath), len(all_candlesticks), "candlesticks"))
+            print(f"\n  Saved {len(all_candlesticks)} candlesticks")
 
     # Trades - combine all
     if 'trades' in data_types:
@@ -538,10 +558,10 @@ def export_multiple_markets(fetcher, exporter, markets: list, data_types: list, 
             df = pd.DataFrame(all_trades)
             if 'created_time' in df.columns:
                 df['datetime'] = pd.to_datetime(df['created_time'])
-            filepath = f"data/{keyword_clean}_trades_{timestamp}.csv"
+            filepath = export_dir / f"trades_{timestamp}.csv"
             df.to_csv(filepath, index=False)
-            exported_files.append((filepath, len(all_trades), "trades"))
-            print(f"\n  Saved {len(all_trades)} trades to {filepath}")
+            exported_files.append((str(filepath), len(all_trades), "trades"))
+            print(f"\n  Saved {len(all_trades)} trades")
 
     # Summary
     if exported_files:
@@ -552,6 +572,324 @@ def export_multiple_markets(fetcher, exporter, markets: list, data_types: list, 
         print("=" * 50)
 
     return exported_files
+
+
+def generate_llm_context():
+    """Generate LLM-ready context from exported data."""
+    from datetime import datetime
+
+    # Lazy import context builder
+    try:
+        from data_loader import load_all_data
+        from context_builder import (
+            build_full_context,
+            export_context_json,
+            export_context_compact
+        )
+        from stats import market_summary
+    except ImportError as e:
+        print(f"\nError: Could not import context builder modules: {e}")
+        print("Make sure the analysis/ directory exists with all required files.")
+        return
+
+    print("\n" + "=" * 50)
+    print("  Generate LLM Context")
+    print("=" * 50)
+
+    # Find data directory
+    default_data_dir = "./data"
+    if not Path(default_data_dir).exists():
+        default_data_dir = "./src/data"
+
+    data_dir = get_input("\nData directory", default_data_dir)
+    data_path = Path(data_dir)
+
+    if not data_path.exists():
+        print(f"Error: Directory not found: {data_path}")
+        return
+
+    # Check for CSV files
+    csv_files = list(data_path.glob("*.csv"))
+    if not csv_files:
+        print(f"Error: No CSV files found in {data_path}")
+        return
+
+    print(f"\nFound {len(csv_files)} CSV files:")
+    for f in csv_files[:5]:
+        print(f"  - {f.name}")
+    if len(csv_files) > 5:
+        print(f"  ... and {len(csv_files) - 5} more")
+
+    # Get theme (search keyword used)
+    theme = get_input("\nTheme/keyword for these markets (e.g., 'federal reserve', 'inflation')", "markets")
+
+    # Load data
+    print("\nLoading data...")
+    try:
+        market_info, candlesticks, trades = load_all_data(str(data_path))
+    except Exception as e:
+        print(f"Error loading data: {e}")
+        return
+
+    if market_info.empty:
+        print("Error: No market data found in the CSV files.")
+        return
+
+    # Show summary
+    summary = market_summary(market_info)
+    print(f"\n  Markets loaded: {summary.get('total_markets', 0):,}")
+    print(f"  Total volume: {summary.get('total_volume', 0):,} contracts")
+    if not candlesticks.empty:
+        print(f"  Candlesticks: {len(candlesticks):,} data points")
+    if not trades.empty:
+        print(f"  Trades: {len(trades):,} records")
+
+    # Generate context
+    print("\nBuilding context...")
+    try:
+        context = build_full_context(market_info, candlesticks, trades, theme)
+    except Exception as e:
+        print(f"Error building context: {e}")
+        import traceback
+        traceback.print_exc()
+        return
+
+    # Show context summary
+    print("\n  Context Summary:")
+    print(f"    Collection: {context['collection'].get('total_markets', 0)} markets")
+    print(f"    Market groups: {len(context.get('market_groups', []))}")
+    print(f"    Markets with full analysis: {len(context.get('markets', []))}")
+
+    # Show market groups info
+    for group in context.get('market_groups', [])[:3]:
+        print(f"\n    Group: {group.get('event_ticker', 'N/A')}")
+        print(f"      Markets: {group.get('market_count', 0)}, Volume: {group.get('total_volume', 0):,}")
+        if group.get('winner'):
+            print(f"      Winner: {group.get('winner_label', group.get('winner'))}")
+        if group.get('lead_changes'):
+            print(f"      Lead changes: {group['lead_changes'].get('total_lead_changes', 0)}")
+
+    # Output options
+    output_idx = select_option(
+        "\nOutput format:",
+        ["JSON (full context)", "Compact text (token-efficient)", "Both"]
+    )
+
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    theme_clean = theme.replace(" ", "_").lower()
+
+    Path("./outputs").mkdir(parents=True, exist_ok=True)
+
+    try:
+        if output_idx in (0, 2):
+            json_path = f"./outputs/{theme_clean}_context_{timestamp}.json"
+            export_context_json(context, json_path)
+            print(f"\n  JSON saved: {json_path}")
+
+            # Show file size
+            size_bytes = Path(json_path).stat().st_size
+            if size_bytes > 1024 * 1024:
+                size_str = f"{size_bytes / (1024 * 1024):.1f} MB"
+            else:
+                size_str = f"{size_bytes / 1024:.1f} KB"
+            print(f"  File size: {size_str}")
+
+        if output_idx in (1, 2):
+            compact = export_context_compact(context)
+            txt_path = f"./outputs/{theme_clean}_context_{timestamp}.txt"
+            Path(txt_path).write_text(compact)
+            print(f"\n  Compact text saved: {txt_path}")
+
+            # Show preview
+            preview_idx = select_option(
+                "Show preview of compact context?",
+                ["Yes (first 50 lines)", "No"]
+            )
+            if preview_idx == 0:
+                lines = compact.split('\n')[:50]
+                print("\n" + "-" * 40)
+                print('\n'.join(lines))
+                if len(compact.split('\n')) > 50:
+                    print(f"... ({len(compact.split(chr(10))) - 50} more lines)")
+                print("-" * 40)
+
+    except Exception as e:
+        print(f"Error saving context: {e}")
+        import traceback
+        traceback.print_exc()
+        return
+
+    print("\n" + "=" * 50)
+    print("  Context Generation Complete!")
+    print("=" * 50)
+
+
+def analyze_data():
+    """Analyze exported data and generate reports."""
+    from datetime import datetime
+
+    # Lazy import analysis modules
+    try:
+        from data_loader import load_all_data
+        from report import generate_html_report, generate_markdown_report
+        from deep_dive import generate_all_deep_dives
+        from stats import market_summary, outcome_analysis
+    except ImportError as e:
+        print(f"\nError: Could not import analysis modules: {e}")
+        print("Make sure the analysis/ directory exists with all required files.")
+        return
+
+    print("\n" + "=" * 50)
+    print("  Market Data Analysis")
+    print("=" * 50)
+
+    # Find data directory
+    default_data_dir = "./data"
+    if not Path(default_data_dir).exists():
+        default_data_dir = "./src/data"
+
+    data_dir = get_input("\nData directory", default_data_dir)
+    data_path = Path(data_dir)
+
+    if not data_path.exists():
+        print(f"Error: Directory not found: {data_path}")
+        return
+
+    # Check for CSV files
+    csv_files = list(data_path.glob("*.csv"))
+    if not csv_files:
+        print(f"Error: No CSV files found in {data_path}")
+        return
+
+    print(f"\nFound {len(csv_files)} CSV files in {data_path}")
+
+    # Load data
+    print("\nLoading data...")
+    try:
+        market_info, candlesticks, trades = load_all_data(str(data_path))
+    except Exception as e:
+        print(f"Error loading data: {e}")
+        return
+
+    if market_info.empty:
+        print("Error: No market data found in the CSV files.")
+        return
+
+    # Show summary
+    summary = market_summary(market_info)
+    outcomes = outcome_analysis(market_info)
+
+    print(f"\n  Markets: {summary.get('total_markets', 0):,}")
+    print(f"  Total Volume: {summary.get('total_volume', 0):,} contracts")
+
+    if 'by_status' in summary:
+        status_str = ", ".join(f"{v} {k}" for k, v in summary['by_status'].items())
+        print(f"  Status: {status_str}")
+
+    if outcomes.get('finalized_count', 0) > 0:
+        print(f"  Outcomes: {outcomes.get('resolved_yes', 0)} YES, {outcomes.get('resolved_no', 0)} NO")
+
+    # Select output format
+    format_idx = select_option(
+        "\nOutput format:",
+        ["HTML (self-contained, recommended)", "Markdown (with separate PNG files)"]
+    )
+
+    output_format = 'html' if format_idx == 0 else 'md'
+
+    # Deep dive option (for HTML)
+    include_deep_dive = False
+    if output_format == 'html':
+        deep_dive_idx = select_option(
+            "Include deep-dive analysis of related market groups?",
+            ["Yes (auto-detect and analyze related markets)", "No (basic report only)"]
+        )
+        include_deep_dive = (deep_dive_idx == 0)
+
+    # Output path
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    if output_format == 'html':
+        default_output = f"./outputs/report_{timestamp}.html"
+    else:
+        default_output = "./outputs"
+
+    output_path = get_input("Output path", default_output)
+
+    # Generate report
+    print("\nGenerating report...")
+
+    try:
+        if output_format == 'html':
+            # Generate deep dives if requested
+            deep_dives = []
+            if include_deep_dive:
+                print("  Finding related market groups...")
+                deep_dives = generate_all_deep_dives(
+                    market_info,
+                    candlesticks,
+                    max_groups=5,
+                    min_markets=3
+                )
+                if deep_dives:
+                    print(f"  Found {len(deep_dives)} groups for deep dive")
+                else:
+                    print("  No related market groups found")
+
+            report_path = generate_html_report(
+                market_info,
+                candlesticks,
+                trades,
+                deep_dives=deep_dives,
+                output_path=output_path,
+                top_n=5
+            )
+
+            # Show file size
+            size_bytes = Path(report_path).stat().st_size
+            if size_bytes > 1024 * 1024:
+                size_str = f"{size_bytes / (1024 * 1024):.1f} MB"
+            else:
+                size_str = f"{size_bytes / 1024:.1f} KB"
+
+            print(f"\n  Report saved: {report_path}")
+            print(f"  File size: {size_str}")
+
+        else:
+            # Markdown format - also generates chart PNGs
+            from charts import generate_all_charts
+
+            # Generate charts first
+            print("  Generating charts...")
+            charts = generate_all_charts(market_info, candlesticks, output_path, top_n=5)
+            print(f"  Generated {len(charts)} charts")
+
+            # Generate report
+            report_path = generate_markdown_report(
+                market_info,
+                candlesticks,
+                trades,
+                output_path,
+                top_n=5
+            )
+            print(f"\n  Report saved: {report_path}")
+
+        print("\n" + "=" * 50)
+        print("  Analysis Complete!")
+        print("=" * 50)
+
+        # Show insights
+        if deep_dives:
+            print(f"\n  Deep dives: {len(deep_dives)} market groups analyzed")
+            for dive in deep_dives:
+                metrics = dive.get('convergence_metrics') or {}
+                if metrics.get('days_at_90_plus'):
+                    days = metrics['days_at_90_plus']
+                    print(f"    - {dive['title']}: converged {days} days early")
+
+    except Exception as e:
+        print(f"\nError generating report: {e}")
+        import traceback
+        traceback.print_exc()
 
 
 def main():
@@ -575,12 +913,20 @@ def main():
             # Main menu
             mode_idx = select_option(
                 "What would you like to do?",
-                ["Browse markets by category", "Quit"]
+                ["Browse markets by category", "Analyze exported data", "Generate LLM context", "Quit"]
             )
 
-            if mode_idx == 1:
+            if mode_idx == 3:
                 print("\nGoodbye!")
                 break
+
+            if mode_idx == 1:
+                analyze_data()
+                continue
+
+            if mode_idx == 2:
+                generate_llm_context()
+                continue
 
             # Browse by category
             markets = browse_by_category(fetcher)
@@ -590,25 +936,99 @@ def main():
             if not markets:
                 continue
 
-            # Count active markets
-            active_markets = [m for m in markets if m.get('status') == 'active']
-            print(f"\n{len(active_markets)} of {len(markets)} markets are active.")
+            # Status filter
+            status_counts = {}
+            for m in markets:
+                s = m.get('status', 'unknown')
+                status_counts[s] = status_counts.get(s, 0) + 1
+
+            status_summary = ", ".join(f"{count} {status}" for status, count in sorted(status_counts.items()))
+            print(f"\nMarket statuses: {status_summary}")
+
+            status_filter_idx = select_option(
+                "Which market statuses to include?",
+                ["Active/Open only", "Finalized/Settled only", "All markets (any status)"]
+            )
+
+            if status_filter_idx == 0:
+                filtered_markets = [m for m in markets if m.get('status') in ('active', 'open')]
+            elif status_filter_idx == 1:
+                filtered_markets = [m for m in markets if m.get('status') in ('closed', 'settled', 'finalized')]
+            else:
+                filtered_markets = markets
+
+            print(f"\n{len(filtered_markets)} markets match the status filter.")
+
+            if not filtered_markets:
+                print("No markets match the filter.")
+                continue
+
+            # Activity filters
+            filter_idx = select_option(
+                "Apply activity filters?",
+                ["No filters (include all)", "Minimum volume", "Minimum liquidity", "Custom thresholds"]
+            )
+
+            if filter_idx == 1:
+                min_vol = get_input("Minimum total volume", "100")
+                try:
+                    min_vol = int(min_vol)
+                    filtered_markets = [m for m in filtered_markets if m.get('volume', 0) >= min_vol]
+                    print(f"{len(filtered_markets)} markets have volume >= {min_vol}")
+                except ValueError:
+                    print("Invalid input, skipping filter")
+
+            elif filter_idx == 2:
+                min_liq = get_input("Minimum liquidity in cents", "1000")
+                try:
+                    min_liq = int(min_liq)
+                    filtered_markets = [m for m in filtered_markets if m.get('liquidity', 0) >= min_liq]
+                    print(f"{len(filtered_markets)} markets have liquidity >= {min_liq} cents")
+                except ValueError:
+                    print("Invalid input, skipping filter")
+
+            elif filter_idx == 3:
+                print("\nEnter thresholds (leave blank to skip):")
+                min_vol = get_input("  Minimum volume", "")
+                min_liq = get_input("  Minimum liquidity (cents)", "")
+                min_oi = get_input("  Minimum open interest", "")
+
+                if min_vol:
+                    try:
+                        filtered_markets = [m for m in filtered_markets if m.get('volume', 0) >= int(min_vol)]
+                    except ValueError:
+                        pass
+                if min_liq:
+                    try:
+                        filtered_markets = [m for m in filtered_markets if m.get('liquidity', 0) >= int(min_liq)]
+                    except ValueError:
+                        pass
+                if min_oi:
+                    try:
+                        filtered_markets = [m for m in filtered_markets if m.get('open_interest', 0) >= int(min_oi)]
+                    except ValueError:
+                        pass
+
+                print(f"{len(filtered_markets)} markets after custom filters")
+
+            if not filtered_markets:
+                print("No markets match the filters.")
+                continue
 
             # Export mode selection
             export_mode = select_option(
                 "How would you like to export?",
-                ["Export all active markets", "Select specific markets", "Select single market"]
+                ["Export all filtered markets", "Select specific markets", "Select single market"]
             )
 
             # Determine which markets to export
             selected_markets = []
-            keyword = "markets"  # Default keyword for filename
 
             if export_mode == 0:
-                # All active markets
-                selected_markets = active_markets
+                # All filtered markets
+                selected_markets = filtered_markets
                 if not selected_markets:
-                    print("No active markets found.")
+                    print("No markets match the filter.")
                     continue
 
             elif export_mode == 1:
@@ -654,6 +1074,9 @@ def main():
                 selected_markets = [selected_market]
 
             print(f"\nSelected {len(selected_markets)} market(s) for export.")
+
+            # Get export name (used for subdirectory)
+            keyword = get_input("\nExport name (creates data/<name>/ directory)", "markets")
 
             # Data type selection
             data_type_idx = select_option(

@@ -149,3 +149,68 @@ class DataExporter:
         df.to_csv(filepath, index=False)
 
         return str(filepath)
+
+    def reconstruct_candlesticks_from_trades(
+        self,
+        trades: list[dict],
+        period_minutes: int = 1440
+    ) -> list[dict]:
+        """
+        Reconstruct OHLCV candlestick data from trade history.
+
+        Use this as a fallback when the API candlestick endpoint fails
+        (e.g., when series_ticker is missing).
+
+        Args:
+            trades: List of trade dictionaries with 'created_time', 'yes_price', 'count'
+            period_minutes: Candlestick period (1440 for daily, 60 for hourly)
+
+        Returns:
+            List of candlestick dictionaries with open, high, low, close, volume
+        """
+        if not trades:
+            return []
+
+        df = pd.DataFrame(trades)
+
+        # Parse timestamps
+        if 'created_time' in df.columns:
+            df['datetime'] = pd.to_datetime(df['created_time'])
+        elif 'datetime' in df.columns:
+            df['datetime'] = pd.to_datetime(df['datetime'])
+        else:
+            return []
+
+        # Use yes_price for OHLC (in cents)
+        price_col = 'yes_price' if 'yes_price' in df.columns else 'price'
+        if price_col not in df.columns:
+            return []
+
+        volume_col = 'count' if 'count' in df.columns else None
+
+        # Set datetime as index and sort
+        df = df.set_index('datetime').sort_index()
+
+        # Resample to period
+        period_str = f'{period_minutes}min'
+
+        # Calculate OHLC
+        ohlc = df[price_col].resample(period_str).ohlc()
+        ohlc.columns = ['open_price', 'high_price', 'low_price', 'close_price']
+
+        # Add volume if available
+        if volume_col and volume_col in df.columns:
+            volume = df[volume_col].resample(period_str).sum()
+            ohlc['volume'] = volume
+
+        # Drop periods with no trades
+        ohlc = ohlc.dropna()
+
+        if ohlc.empty:
+            return []
+
+        # Convert to list of dicts
+        ohlc = ohlc.reset_index()
+        ohlc['end_period_ts'] = ohlc['datetime'].astype('int64') // 10**9
+
+        return ohlc.to_dict('records')
