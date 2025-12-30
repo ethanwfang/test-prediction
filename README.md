@@ -1,6 +1,6 @@
-# Prediction Market Data Fetcher
+# Prediction Market Data Fetcher & Analyzer
 
-Fetch historical data from Kalshi prediction markets and export to CSV for analysis. Uses public API endpoints - no authentication required.
+Fetch historical data from Kalshi prediction markets, export to CSV, and generate comprehensive analysis reports. Uses public API endpoints - no authentication required.
 
 ## Setup
 
@@ -10,8 +10,10 @@ pip install -r requirements.txt
 
 **Dependencies:**
 - `requests` - API calls
-- `pandas` - CSV export
+- `pandas` - Data processing and CSV export
 - `sentence-transformers` - Semantic search (downloads ~80MB model on first use)
+- `matplotlib` - Chart generation
+- `seaborn` - Statistical visualizations
 
 ## Usage
 
@@ -43,6 +45,14 @@ Choose what data to export:
 - **Candlesticks (OHLC)** - Historical price data (daily)
 - **Trade history** - Individual trades with timestamps
 - **All data types** - Export everything
+
+### 5. Analyze Exported Data
+Generate comprehensive analysis reports from exported CSV files:
+- **Self-contained HTML reports** - All charts embedded as base64, ready for offline viewing
+- **Auto deep-dive analysis** - Detects related market groups and analyzes convergence patterns
+- **Probability distribution charts** - Shows how probability shifted between competing outcomes
+- **Convergence analysis** - Identifies when markets "knew" the answer before resolution
+- **Market calibration** - Visualizes how well prices predicted actual outcomes
 
 ## Example Session
 
@@ -137,6 +147,37 @@ CSV files are saved to the `data/` directory.
 |---------------|--------------|----------|-------|-------|------------|
 | FED-29JAN-425 | Fed rate... | 2025-01-15 10:30 | 0.44 | 10 | yes |
 
+## Standalone Analysis CLI
+
+You can also run analysis directly without the interactive menu:
+
+```bash
+# Generate HTML report (recommended)
+python analysis/analyze.py --data-dir ./data --output ./report.html
+
+# Generate markdown report with separate chart files
+python analysis/analyze.py --data-dir ./data --format md --output-dir ./outputs
+
+# Skip deep-dive analysis for faster generation
+python analysis/analyze.py --data-dir ./data --output ./report.html --no-deep-dive
+```
+
+### Analysis Output
+
+The HTML report includes:
+- **Executive Summary** - Market counts, volumes, outcome statistics
+- **Top Markets Table** - Highest volume markets with outcomes
+- **Outcome Analysis** - YES/NO distribution with calibration chart
+- **Deep Dive Sections** - Auto-detected related market groups with:
+  - Probability distribution over time (stacked area chart)
+  - Convergence analysis (when did markets cross 50%/90%?)
+  - Auto-generated narrative summary
+- **Price History Charts** - Individual market price movements
+- **Key Insights** - Auto-generated observations
+
+Example insight from analysis:
+> "Fed Terminal Rate 2023 markets converged to the correct answer ~5 months before official resolution."
+
 ## Project Structure
 
 ```
@@ -146,7 +187,16 @@ prediction-market/
 │   ├── market_fetcher.py  # Market search and data retrieval
 │   ├── data_exporter.py   # CSV export with pandas
 │   └── main.py            # Interactive CLI
+├── analysis/
+│   ├── analyze.py         # Standalone analysis CLI
+│   ├── data_loader.py     # Load CSVs with proper dtypes
+│   ├── stats.py           # Statistical calculations
+│   ├── charts.py          # Chart generation (base64 support)
+│   ├── report.py          # HTML/Markdown report generation
+│   ├── deep_dive.py       # Auto group detection & convergence
+│   └── probability_distribution.py  # Stacked area charts
 ├── data/                  # CSV output directory
+├── outputs/               # Generated reports
 ├── requirements.txt
 └── README.md
 ```
